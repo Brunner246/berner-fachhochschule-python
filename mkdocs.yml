@@ -1,0 +1,67 @@
+site_name: Python & cadwork 3d API
+site_description: BFH lectures on Python programming and the cadwork 3d Python API
+site_url: https://example.github.io/berner-fachhochschule/
+
+theme:
+  name: material
+  palette:
+    - scheme: default
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - scheme: slate
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - navigation.top
+    - search.suggest
+    - search.highlight
+    - content.code.copy
+
+plugins:
+  - search
+
+markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - attr_list
+  - md_in_html
+  - toc:
+      permalink: true
+
+nav:
+  - Home: index.md
+  - Python Basics:
+      - Overview: python-basics/index.md
+      - Data Types: python-basics/data-types.md
+      - Control Flow: python-basics/control-flow.md
+      - Functions: python-basics/functions.md
+      - Object-Oriented Programming: python-basics/oop.md
+  - cadwork 3d API:
+      - Overview: cadwork-api/index.md
+      - Getting Started: cadwork-api/getting-started.md
+      - Elements: cadwork-api/elements.md
+      - Attributes: cadwork-api/attributes.md
+      - MCP: cadwork-api/mcp.md
+      - "Exercises: Reading Data": cadwork-api/exercises-reading.md
+      - "Exercises: Geometry": cadwork-api/exercises-geometry.md
+      - "Exercises: Create & Modify": cadwork-api/exercises-create-modify.md
+  - Resources: resources/index.md
