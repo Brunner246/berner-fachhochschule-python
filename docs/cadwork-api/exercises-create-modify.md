@@ -2,6 +2,9 @@
 
 These exercises build on the previous ones. You will now create new elements and modify existing ones in the timber framed slab model.
 
+!!! info "Setup"
+    [Download the timber framed slab model](model-download.md) and open it in cadwork 3d before starting.
+
 !!! warning
     These exercises modify the model. Save a copy of the original file before starting so you can reset if needed.
 
@@ -20,7 +23,7 @@ Write a script that renames all elements currently named `"Beam"` to `"Joist"`.
     beams = [eid for eid in all_ids if ac.get_name(eid) == "Beam"]
 
     for eid in beams:
-        ac.set_name(eid, "Joist")
+        ac.set_name([eid], "Joist")
 
     print(f"Renamed {len(beams)} elements")
     ```
@@ -40,22 +43,22 @@ Write a script that sets the group to `"Slab"` and the subgroup to `"Structure"`
     joists = [eid for eid in all_ids if ac.get_name(eid) == "Joist"]
 
     for eid in joists:
-        ac.set_group(eid, "Slab")
-        ac.set_subgroup(eid, "Structure")
+        ac.set_group([eid], "Slab")
+        ac.set_subgroup([eid], "Structure")
 
     print(f"Updated {len(joists)} joists")
     ```
 
 ---
 
-## Exercise 3: Assign Sequential Production Numbers
+## Exercise 3: Assign Sequential Assembly Numbers
 
-Write a script that assigns a sequential production number (via a user attribute) to every joist, sorted by their position along the Y-axis.
+Write a script that assigns a sequential assembly number (via a user attribute) to every joist, sorted by their position along the Y-axis.
 
 Expected result: the joist closest to Y=0 gets `"J-001"`, the next one `"J-002"`, etc.
 
 ??? example "Hint"
-    Sort joists by the Y-coordinate of their P1, then use `ac.set_user_attribute()` with a formatted string.
+    Sort joists by the Y-coordinate of their P1, then use `ac.set_user_attribute()` or `ac.set_assembly_number()` with a formatted string.
 
 ??? success "Solution"
     ```python
@@ -70,11 +73,11 @@ Expected result: the joist closest to Y=0 gets `"J-001"`, the next one `"J-002"`
     joists_sorted = sorted(joists, key=lambda eid: gc.get_p1(eid).y)
 
     for i, eid in enumerate(joists_sorted, start=1):
-        production_nr = f"J-{i:03d}"
-        ac.set_user_attribute(eid, 1, production_nr)
-        print(f"ID {eid} -> {production_nr}")
+        assembly_nr = f"J-{i:03d}"
+        ac.set_user_attribute([eid], 1, assembly_nr) # or ac.set_assembly_number([eid], assembly_nr)
+        print(f"ID {eid} -> {assembly_nr}")
 
-    print(f"Assigned production numbers to {len(joists_sorted)} joists")
+    print(f"Assigned assembly numbers to {len(joists_sorted)} joists")
     ```
 
 ---
@@ -98,9 +101,13 @@ After creating it, set the name to `"New Joist"`.
 
     p1 = cw.point_3d(0, 0, 0)
     p2 = cw.point_3d(5000, 0, 0)
-
-    new_id = ec.create_rectangular_beam_vectors(120.0, 240.0, p1, p2)
-    ac.set_name(new_id, "New Joist")
+    
+    width = 120.0
+    height = 240.0
+    length = p2.distance(p1)
+    length_direction = (p2 - p1).normalized()
+    new_id = ec.create_rectangular_beam_vectors(width, height, length, p1, length_direction)
+    ac.set_name([new_id], "New Joist")
 
     print(f"Created element {new_id}")
     ```
@@ -141,11 +148,13 @@ flowchart TB
         y = i * SPACING
         p1 = cw.point_3d(0, y, 0)
         p2 = cw.point_3d(LENGTH, y, 0)
+        length = p2.distance(p1)
+        length_direction = (p2 - p1).normalized()
 
-        new_id = ec.create_rectangular_beam_vectors(WIDTH, HEIGHT, p1, p2)
-        ac.set_name(new_id, "Joist")
-        ac.set_group(new_id, "Slab")
-        ac.set_subgroup(new_id, "Structure")
+        new_id = ec.create_rectangular_beam_vectors(WIDTH, HEIGHT, length, p1, length_direction)
+        ac.set_name([new_id], "Joist")
+        ac.set_group([new_id], "Slab")
+        ac.set_subgroup([new_id], "Structure")
         created.append(new_id)
 
     print(f"Created {len(created)} joists")
@@ -198,14 +207,18 @@ flowchart TB
     # Rim joist at x=0
     p1 = cw.point_3d(0, y_start, 0)
     p2 = cw.point_3d(0, y_end, 0)
-    rim1 = ec.create_rectangular_beam_vectors(WIDTH, HEIGHT, p1, p2)
-    ac.set_name(rim1, "Rim Joist")
+    length = p2.distance(p1)
+    length_direction = (p2 - p1).normalized()
+    rim1 = ec.create_rectangular_beam_vectors(WIDTH, HEIGHT, length, p1, length_direction)
+    ac.set_name([rim1], "Rim Joist")
 
     # Rim joist at x=LENGTH
     p1 = cw.point_3d(LENGTH, y_start, 0)
     p2 = cw.point_3d(LENGTH, y_end, 0)
-    rim2 = ec.create_rectangular_beam_vectors(WIDTH, HEIGHT, p1, p2)
-    ac.set_name(rim2, "Rim Joist")
+    length = p2.distance(p1)
+    length_direction = (p2 - p1).normalized()
+    rim2 = ec.create_rectangular_beam_vectors(WIDTH, HEIGHT, length, p1, length_direction)
+    ac.set_name([rim2], "Rim Joist")
 
     print(f"Created rim joists: {rim1}, {rim2}")
     ```
@@ -247,11 +260,13 @@ flowchart LR
 
         p1 = cw.point_3d(MID_X, y_start, 0)
         p2 = cw.point_3d(MID_X, y_end, 0)
+        length = p2.distance(p1)
+        length_direction = (p2 - p1).normalized()
 
-        new_id = ec.create_rectangular_beam_vectors(WIDTH, HEIGHT, p1, p2)
-        ac.set_name(new_id, "Blocking")
-        ac.set_group(new_id, "Slab")
-        ac.set_subgroup(new_id, "Structure")
+        new_id = ec.create_rectangular_beam_vectors(WIDTH, HEIGHT, length, p1, length_direction)
+        ac.set_name([new_id], "Blocking")
+        ac.set_group([new_id], "Slab")
+        ac.set_subgroup([new_id], "Structure")
         created.append(new_id)
 
     print(f"Created {len(created)} blocking elements")
@@ -264,18 +279,18 @@ flowchart LR
 Write a script that changes the width of all elements named `"Joist"` from `60 mm` to `80 mm`.
 
 ??? example "Hint"
-    Use `ec.set_width()` to modify the cross-section of an existing element.
+    Use `gc.set_width_real()` to modify the cross-section of an existing element.
 
 ??? success "Solution"
     ```python
-    import element_controller as ec
+    import geometry_controller as gc
     import attribute_controller as ac
 
-    all_ids = ec.get_all_identifiable_element_ids()
+    all_ids = gc.get_all_identifiable_element_ids()
     joists = [eid for eid in all_ids if ac.get_name(eid) == "Joist"]
 
     for eid in joists:
-        ec.set_width(eid, 80.0)
+        gc.set_width_real([eid], 80.0)
 
     print(f"Updated width for {len(joists)} joists")
     ```

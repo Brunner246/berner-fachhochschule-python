@@ -3,7 +3,7 @@
 These exercises focus on reading geometrical data from the timber framed slab model. You will work with element dimensions, positions, and volumes.
 
 !!! info "Setup"
-    Open the provided timber framed slab model in cadwork 3d. These exercises use `element_controller`, `attribute_controller`, and `geometry_controller`.
+    [Download the timber framed slab model](model-download.md) and open it in cadwork 3d. These exercises use `element_controller`, `attribute_controller`, and `geometry_controller`.
 
 ---
 
@@ -18,14 +18,15 @@ Write a script that prints the length, width, and height of each element named `
     ```python
     import element_controller as ec
     import attribute_controller as ac
+    import geometry_controller as gc
 
     all_ids = ec.get_all_identifiable_element_ids()
     joists = [eid for eid in all_ids if ac.get_name(eid) == "Joist"]
 
     for eid in joists:
-        length = ec.get_length(eid)
-        width = ec.get_width(eid)
-        height = ec.get_height(eid)
+        length = gc.get_length(eid)
+        width = gc.get_width(eid)
+        height = gc.get_height(eid)
         print(f"ID {eid}: {length:.0f} x {width:.0f} x {height:.0f} mm")
     ```
 
@@ -41,10 +42,11 @@ Write a script that calculates the total volume (in m³) of all elements in the 
 ??? success "Solution"
     ```python
     import element_controller as ec
+    import geometry_controller as gc
 
     all_ids = ec.get_all_identifiable_element_ids()
     total_volume_mm3 = sum(
-        ec.get_length(eid) * ec.get_width(eid) * ec.get_height(eid)
+        gc.get_length(eid) * gc.get_width(eid) * gc.get_height(eid)
         for eid in all_ids
     )
     total_volume_m3 = total_volume_mm3 / 1e9
@@ -76,9 +78,18 @@ OSB   :  0.189 m³
 
     for eid in all_ids:
         material = ac.get_material(eid)
-        volume_mm3 = ec.get_length(eid) * ec.get_width(eid) * ec.get_height(eid)
+        volume_mm3 = gc.get_length(eid) * gc.get_width(eid) * gc.get_height(eid)
         volume_by_material[material] += volume_mm3
 
+    for material, vol in sorted(volume_by_material.items()):
+        print(f"{material:12s}: {vol / 1e9:.3f} m³")
+
+    # or without defaultdict:
+    volume_by_material = {}
+    for eid in all_ids:
+        material = ac.get_material(eid)
+        volume_mm3 = gc.get_length(eid) * gc.get_width(eid) * gc.get_height(eid)
+        volume_by_material[material] = volume_by_material.get(material, 0) + volume_mm3
     for material, vol in sorted(volume_by_material.items()):
         print(f"{material:12s}: {vol / 1e9:.3f} m³")
     ```
@@ -92,15 +103,16 @@ Write a script that finds the element with the greatest length and prints its ID
 ??? success "Solution"
     ```python
     import element_controller as ec
+    import geometry_controller as gc
     import attribute_controller as ac
 
     all_ids = ec.get_all_identifiable_element_ids()
-    longest_id = max(all_ids, key=lambda eid: ec.get_length(eid))
+    longest_id = max(all_ids, key=lambda eid: gc.get_length(eid))
 
     print(
         f"Longest element: ID {longest_id}, "
         f"Name: {ac.get_name(longest_id)}, "
-        f"Length: {ec.get_length(longest_id):.0f} mm"
+        f"Length: {gc.get_length(longest_id):.0f} mm"
     )
     ```
 
@@ -149,7 +161,7 @@ flowchart LR
 ```
 
 ??? example "Hint"
-    Get the P1 of each joist, sort by the coordinate perpendicular to the joist direction, then compute differences between consecutive positions.
+    Get the P1 of each joist, sort by the coordinate perpendicular to the joist direction, then compute differences between consecutive positions. Assumption: Direction of distribution in the Y-axis, so sort by `p1.y`.
 
 ??? success "Solution"
     ```python
@@ -204,9 +216,9 @@ Extend the CSV export from the reading exercises: add columns for `Length`, `Wid
         ])
         for eid in all_ids:
             p1 = gc.get_p1(eid)
-            length = ec.get_length(eid)
-            width = ec.get_width(eid)
-            height = ec.get_height(eid)
+            length = gc.get_length(eid)
+            width = gc.get_width(eid)
+            height = gc.get_height(eid)
             volume = (length * width * height) / 1e9
             writer.writerow([
                 eid,

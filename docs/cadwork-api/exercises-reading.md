@@ -3,7 +3,7 @@
 In these exercises you will work with a timber framed slab model provided as a cadwork 3d file. The goal is to practice querying elements and their attributes without modifying anything.
 
 !!! info "Setup"
-    Open the provided timber framed slab model in cadwork 3d before starting. All exercises use the `element_controller` and `attribute_controller` modules.
+    [Download the timber framed slab model](model-download.md) and open it in cadwork 3d before starting. All exercises use the `element_controller` and `attribute_controller` modules.
 
 ---
 
@@ -64,6 +64,23 @@ Write a script that finds all elements with the name `"Joist"` and prints how ma
 
 ---
 
+## Exercise 3.1: Filter by Element Type
+Write a script that finds all elements of type `"Rectangular Beam"` and prints how many were found.
+
+??? example "Hint"
+    Use `ac.get_element_type()` to check the type of each element.
+
+??? success "Solution"
+    ```python
+    import cadwork
+    import element_controller as ec
+    import attribute_controller as ac
+
+    all_ids = ec.get_all_identifiable_element_ids()
+    beams = [eid for eid in all_ids if ac.get_element_type(eid).is_rectangular_beam()]
+    print(f"Rectangular Beams found: {len(beams)}")
+    ```
+
 ## Exercise 4: Group Elements by Name
 
 Write a script that groups all elements by their name and prints a summary table showing each name and the count of elements.
@@ -89,6 +106,14 @@ Blocking      :  6
     all_ids = ec.get_all_identifiable_element_ids()
     name_counts = Counter(ac.get_name(eid) for eid in all_ids)
 
+    for name, count in sorted(name_counts.items()):
+        print(f"{name:20s}: {count:3d}")
+
+    # or with a dict:
+    name_counts = {}
+    for eid in all_ids:
+        name = ac.get_name(eid)
+        name_counts[name] = name_counts.get(name, 0) + 1
     for name, count in sorted(name_counts.items()):
         print(f"{name:20s}: {count:3d}")
     ```
@@ -118,7 +143,7 @@ Sheathing    | OSB         :  2
 
     all_ids = ec.get_all_identifiable_element_ids()
     groups = Counter(
-        (ac.get_name(eid), ac.get_material(eid))
+        (ac.get_name(eid), ac.get_element_material_name(eid))
         for eid in all_ids
     )
 
@@ -175,7 +200,7 @@ Write a script that exports a CSV file containing the columns: `ID`, `Name`, `Gr
                 ac.get_name(eid),
                 ac.get_group(eid),
                 ac.get_subgroup(eid),
-                ac.get_material(eid),
+                ac.get_element_material_name(eid),
             ])
 
     print(f"Exported {len(all_ids)} elements to {output_path}")

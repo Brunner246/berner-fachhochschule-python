@@ -52,6 +52,7 @@ nav:
   - Python Basics:
       - Overview: python-basics/index.md
       - Data Types: python-basics/data-types.md
+      - Data Structures: python-basics/data-structures.md
       - Control Flow: python-basics/control-flow.md
       - Functions: python-basics/functions.md
       - Object-Oriented Programming: python-basics/oop.md
@@ -61,6 +62,7 @@ nav:
       - Elements: cadwork-api/elements.md
       - Attributes: cadwork-api/attributes.md
       - MCP: cadwork-api/mcp.md
+      - Exercise Model: cadwork-api/model-download.md
       - "Exercises: Reading Data": cadwork-api/exercises-reading.md
       - "Exercises: Geometry": cadwork-api/exercises-geometry.md
       - "Exercises: Create & Modify": cadwork-api/exercises-create-modify.md
