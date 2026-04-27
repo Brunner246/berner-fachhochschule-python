@@ -61,6 +61,7 @@ nav:
       - Getting Started: cadwork-api/getting-started.md
       - Elements: cadwork-api/elements.md
       - Attributes: cadwork-api/attributes.md
+      - Geometry: cadwork-api/geometry.md
       - MCP: cadwork-api/mcp.md
       - Exercise Model: cadwork-api/model-download.md
       - "Exercises: Reading Data": cadwork-api/exercises-reading.md
