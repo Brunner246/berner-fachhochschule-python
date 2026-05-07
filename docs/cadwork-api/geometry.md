@@ -190,6 +190,8 @@ def distance_point_to_plane(p: cw.point_3d, p1: cw.point_3d, n: cw.point_3d) -> 
 
 ### Cross product — perpendicular direction
 
+![vector_cross_product](https://gamemath.com/book/figs/vectors/cross_product.png)
+
 The cross product `a × b` returns a *new vector* perpendicular to both `a` and `b`. It is how you build local coordinate systems: given a length axis and an "up" hint, the cross product gives you the side axis.
 
 ```python
