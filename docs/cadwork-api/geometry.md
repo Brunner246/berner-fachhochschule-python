@@ -2,7 +2,7 @@
 
 Almost every cadwork API call that creates or moves elements takes **points** and **vectors** as arguments. This page is a short refresher on the linear algebra you need: what a point is, what a vector is, how the two interact, and how the unit circle turns angles into directions.
 
-In the cadwork Python API, both points and vectors are represented by the same type, [`cadwork.point_3d`](getting-started.md). The mathematical *meaning* (position vs. direction) lives in your head, not in the type — keeping that distinction sharp will save you many bugs.
+In the cadwork Python API, both points and vectors are represented by the same type, [`cadwork.point_3d`](getting-started.md). The mathematical _meaning_ (position vs. direction) lives in your head, not in the type — keeping that distinction sharp will save you many bugs.
 
 ---
 
@@ -10,13 +10,19 @@ In the cadwork Python API, both points and vectors are represented by the same t
 
 ![right_handed_coordinate_space](https://gamemath.com/book/figs/cartesianspace/right_handed_coordinate_space.png)
 
+### cadwork elements - Local Coordinate System (LCS)
+Every element has its own local coordinate system (LCS) that defines how it is oriented in 3D space. The LCS has three axes:
+- **Length axis**: The primary axis along the length of the element (e.g., along a beam or joist).
+- **Width axis**: The secondary axis that defines the width of the element (e.g., across a beam or joist).
+- **Height axis**: The tertiary axis that defines the height of the element (e.g., vertical direction for a beam or joist).
 
+![local-coordinate-system](../../assets/lcs.png)
 
 ## Points
 
 ![vector_vs_point](https://gamemath.com/book/figs/vectors/2d_vector_vs_point.png)
 
-A **point** is a position in 3D space. It answers the question *where?* — for example, the start corner of a joist.
+A **point** is a position in 3D space. It answers the question _where?_ — for example, the start corner of a joist.
 
 ```python
 import cadwork as cw
@@ -35,11 +41,14 @@ import cadwork as cw
 origin = cw.point_3d(0, 0, 0)
 offset = cw.point_3d(625, 0, 0)   # used as a vector here
 moved  = origin + offset          # cw.point_3d(625, 0, 0)
+# (origin.x + offset.x, origin.y + offset.y, origin.z + offset.z)
 ```
 
-This is exactly how *Exercise 5* in [Create & Modify](exercises-create-modify.md) places joists at `y = i * 625` — repeated translation along the Y-axis.
+This is exactly how _Exercise 5_ in [Create & Modify](exercises-create-modify.md) places joists at `y = i * 625` — repeated translation along the Y-axis.
 
 ### Distance between two points
+
+![distance](../../assets/distance.png)
 
 ```python
 import cadwork as cw
@@ -70,7 +79,10 @@ This is a common building block — for example, when placing blocking at the ce
 
 ## Vectors
 
-A **vector** has a *direction* and a *magnitude* (length). It answers the question *how far, and which way?* — for example, "from P1 to P2" or "5000 mm along +X".
+#### Interpreting a vector as a sequence of displacements
+![vectors](https://gamemath.com/book/figs/vectors/3d_sequence_of_displacements.png)
+
+A **vector** has a _direction_ and a _magnitude_ (length). It answers the question _how far, and which way?_ — for example, "from P1 to P2" or "5000 mm along +X".
 
 The key idea: **point − point = vector**. Subtracting two points gives the displacement from one to the other.
 
@@ -81,6 +93,7 @@ p1 = cw.point_3d(0, 0, 0)
 p2 = cw.point_3d(5000, 0, 0)
 
 direction = p2 - p1   # vector pointing from p1 to p2
+# direction = cw.point_3d(p2.x - p1.x, p2.y - p1.y, p2.z - p1.z)
 ```
 
 ### Length (magnitude) of a vector
@@ -95,10 +108,10 @@ A **unit vector** has length 1. It carries direction only, no magnitude. You nor
 length_direction = (p2 - p1).normalized()
 ```
 
-This is the second argument to `ec.create_rectangular_beam_vectors(width, height, length, p1, length_direction)`: cadwork wants a *direction*, not a "to" point, so the magnitude must be stripped away.
+This is the second argument to `ec.create_rectangular_beam_vectors(width, height, length, p1, length_direction)`: cadwork wants a _direction_, not a "to" point, so the magnitude must be stripped away.
 
 !!! warning "Don't normalize the zero vector"
-    `(p1 - p1).normalized()` divides by zero. If you compute a direction from two points, make sure they are distinct.
+`(p1 - p1).normalized()` divides by zero. If you compute a direction from two points, make sure they are distinct.
 
 ### Adding and scaling vectors
 
@@ -120,12 +133,11 @@ Pattern: **start point + (unit direction × distance) = point at that distance a
 
 The dot product `a · b = a.x*b.x + a.y*b.y + a.z*b.z` collapses two vectors into a single number. Its sign and magnitude tell you how the vectors relate:
 
-| Dot product of unit vectors | Meaning                       |
-| --------------------------- | ----------------------------- |
-| `1`                         | same direction (parallel)     |
-| `0`                         | perpendicular                 |
-| `-1`                        | opposite direction            |
-
+| Dot product of unit vectors | Meaning                   |
+| --------------------------- | ------------------------- |
+| `1`                         | same direction (parallel) |
+| `0`                         | perpendicular             |
+| `-1`                        | opposite direction        |
 
 ![dot_product_signs](https://gamemath.com/book/figs/vectors/dot_product_signs.png)
 
@@ -187,12 +199,11 @@ def distance_point_to_plane(p: cw.point_3d, p1: cw.point_3d, n: cw.point_3d) -> 
     return projection.length()
 ```
 
-
 ### Cross product — perpendicular direction
 
 ![vector_cross_product](https://gamemath.com/book/figs/vectors/cross_product.png)
 
-The cross product `a × b` returns a *new vector* perpendicular to both `a` and `b`. It is how you build local coordinate systems: given a length axis and an "up" hint, the cross product gives you the side axis.
+The cross product `a × b` returns a _new vector_ perpendicular to both `a` and `b`. It is how you build local coordinate systems: given a length axis and an "up" hint, the cross product gives you the side axis.
 
 ```python
 def cross(a: cw.point_3d, b: cw.point_3d) -> cw.point_3d:
@@ -213,10 +224,10 @@ side_axis   = cross(length_axis, up_hint)
 
 Same type in code, different meanings in math:
 
-| Concept | Answers     | Example           | Operations that make sense          |
-| ------- | ----------- | ----------------- | ----------------------------------- |
-| Point   | *where?*    | start of a joist  | point − point, point + vector       |
-| Vector  | *how/where to?* | "along +X by 5000 mm" | add, scale, normalize, dot, cross |
+| Concept | Answers         | Example               | Operations that make sense        |
+| ------- | --------------- | --------------------- | --------------------------------- |
+| Point   | _where?_        | start of a joist      | point − point, point + vector     |
+| Vector  | _how/where to?_ | "along +X by 5000 mm" | add, scale, normalize, dot, cross |
 
 Two rules of thumb:
 
@@ -317,7 +328,7 @@ This is how you answer "what angle does this beam make with the X-axis?" — use
 
 ## Summary
 
-- A **point** is a *where*; a **vector** is a *how far / which way*.
+- A **point** is a _where_; a **vector** is a _how far / which way_.
 - `point − point` gives a vector. `point + vector` gives a point. `vector.normalized()` keeps the direction, drops the length.
 - Build positions with the pattern **start + (unit direction × distance)** — it works for any axis, not just X / Y / Z.
 - The **unit circle** turns angles into directions via `(cos θ, sin θ)`. Use it for radial layouts, rotations, and recovering angles with `atan2`.
