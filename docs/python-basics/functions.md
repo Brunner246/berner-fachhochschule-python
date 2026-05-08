@@ -2,6 +2,8 @@
 
 Functions let you organize code into reusable blocks.
 
+![Functions](https://realpython.com/cdn-cgi/image/width=960,format=auto/https://files.realpython.com/media/UPDATE-Defining-Your-Own-Python-Function_Watermarked.54412dcabb8d.jpg)
+
 ## Defining a Function
 
 ```python

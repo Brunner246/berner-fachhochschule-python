@@ -2,6 +2,8 @@
 
 Control flow statements let you execute code conditionally or repeatedly.
 
+![Control flow](https://realpython.com/cdn-cgi/image/width=960,format=auto/https://files.realpython.com/media/Python-while-Loops-Indefinite-Iteration_Watermarked.2dfa40d8e92c.jpg)
+
 ## If / Else
 
 ```mermaid
@@ -71,4 +73,22 @@ print(long_elements)  # [5000, 7500]
 ```
 
 !!! warning
-    Be careful with `while` loops — ensure the condition eventually becomes `False` to avoid infinite loops.
+Be careful with `while` loops — ensure the condition eventually becomes `False` to avoid infinite loops.
+
+## Conditional Expressions
+
+```python
+value_if_true if condition else value_if_false
+```
+
+```python
+length = 5000
+category = "Long element" if length > 6000 else "Short element" 
+print(category)  # Short element
+```
+
+```python
+length = 5000
+category = "Long element" if length > 6000 else "Medium element" if length > 3000 else "Short element"
+print(category)  # Medium element
+```

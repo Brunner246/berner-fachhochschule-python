@@ -16,7 +16,7 @@ Every element has its own local coordinate system (LCS) that defines how it is o
 - **Width axis**: The secondary axis that defines the width of the element (e.g., across a beam or joist).
 - **Height axis**: The tertiary axis that defines the height of the element (e.g., vertical direction for a beam or joist).
 
-![local-coordinate-system](../../assets/lcs.png)
+![local-coordinate-system](../assets/lcs.png)
 
 ## Points
 
@@ -48,7 +48,7 @@ This is exactly how _Exercise 5_ in [Create & Modify](exercises-create-modify.md
 
 ### Distance between two points
 
-![distance](../../assets/distance.png)
+![distance](../assets/distance.png)
 
 ```python
 import cadwork as cw

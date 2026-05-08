@@ -2,6 +2,8 @@
 
 Python provides several built-in data types. Understanding them is the foundation for writing any program.
 
+![data types](https://realpython.com/cdn-cgi/image/width=960,format=auto/https://files.realpython.com/media/Basic-Data-Types-in-Python_Watermarked.e3dd34457952.jpg)
+
 ## Variables
 
 In Python, variables are created by assigning a value:

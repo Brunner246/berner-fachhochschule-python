@@ -2,6 +2,8 @@
 
 Python ships with four built-in container types that cover almost every day-to-day task: **list**, **tuple**, **set**, and **dict**. Picking the right one matters — each has different strengths for storage, lookup, and mutation.
 
+![Data structures](https://realpython.com/cdn-cgi/image/width=960,format=auto/https://files.realpython.com/media/Python-Tricks-Chapter-on-Data-Structures_Watermarked.b5d9d86333c3.jpg)
+
 ## Overview
 
 | Structure | Ordered | Mutable | Duplicates | Lookup | Typical Use |

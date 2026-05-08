@@ -2,6 +2,8 @@
 
 Object-oriented programming (OOP) organizes code around objects that combine data and behavior.
 
+![OOP](https://realpython.com/cdn-cgi/image/width=960,format=auto/https://files.realpython.com/media/Object-Oriented-Programming-OOP-in-Python-3_Watermarked.0d29780806d5.jpg)
+
 ## Core Concepts
 
 The following diagram shows the four pillars of OOP:
