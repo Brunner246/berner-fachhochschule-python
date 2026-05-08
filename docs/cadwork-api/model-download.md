@@ -4,24 +4,20 @@ All cadwork 3d API exercises on this site use the same model: a **timber framed 
 
 ## Download
 
-**[⬇ timber-framed-slab.3d](models/timber-framed-slab.3d)**
+**[⬇ timber-framed-elements.3d](models/timber-framed-elements.3d)**
 
 Timber framed slab — cadwork 3d file (open in cadwork 3d v30 or newer)
 
-!!! tip "How to use the file"
-    1. Click the link above and save the file to your local machine.
-    2. Open it in cadwork 3d (double-click the file).
-    3. Keep a copy of the original — some exercises modify the model and you may want to reset.
+!!! tip "How to use the file" 1. Click the link above and save the file to your local machine. 2. Open it in cadwork 3d (double-click the file). 3. Keep a copy of the original — some exercises modify the model and you may want to reset.
 
 ## What's inside the model
 
 The model represents a single-bay timber framed floor slab and contains the following element groups:
 
-| Name        | Group | Subgroup  | Typical Material |
-|-------------|-------|-----------|------------------|
-| Joist       | Slab  | Structure | GL24h            |
-| Rim Joist   | Slab  | Structure | C24              |
-| Blocking    | Slab  | Structure | C24              |
-| Sheathing   | Slab  | Cladding  | OSB              |
-
-
+| Name       |
+| ---------- |
+| Joist      |
+| Rim Joist  |
+| Blocking   |
+| Sheathing  |
+| Insulation |
