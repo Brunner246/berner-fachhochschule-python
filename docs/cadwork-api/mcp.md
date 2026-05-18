@@ -1,21 +1,23 @@
 # AI-Assisted Scripting & MCP
 
-In practice, most of the cadwork Python you will write after this workshop will be drafted with the help of an AI assistant (Claude, ChatGPT, GitHub Copilot, …). This page shows you how to do that **well** — and what MCP is, for when you are ready to go deeper.
+In practice, most of the cadwork Python you will write after this workshop will be drafted with the help of an AI assistant (Claude, ChatGPT, GitHub Copilot, …). This page shows you how to do that **properly** — and what Cadwork API MCP is, for when you are ready to go deeper.
 
 ## Why use AI to write cadwork scripts
 
-You already know:
+Writing a cadwork script is two jobs in one.
 
-- What you want the script to do (the timber-engineering problem)
-- How to read a result and tell if it is right
+You are already good at:
+- Defining the engineering problem
+- Recognizing whether a result is right
 
-You don't necessarily remember:
+You may not want to spend time on:
+- Remembering every API function name
+- Getting the argument order right
+- Gluing three controllers into a thirty-line script
 
-- The exact name of every API function
-- The right argument order
-- How to combine three controllers into a 30-line script
+AI handles the second list. Modern models have read more of Python code and more example scripts than any one engineer ever will. **You** stay in charge of the first.
 
-The AI fills in the second list. **You** stay in charge of the first.
+> Think of the AI as a fluent coder who knows the API cold but has never seen your project. You bring the engineering intent. It writes the code. You verify it.
 
 ## The iteration loop
 
@@ -31,7 +33,9 @@ flowchart LR
 
 Three rounds is usually enough for a workshop-scale script.
 
-## Writing a good prompt
+Here's some rules and important tips to use these tools effectively.
+
+## User instructions: Writing a good prompt
 
 Bad prompt:
 
@@ -45,31 +49,38 @@ Good prompt:
 > - Creates joists perpendicular to it, every 625 mm, with a 60×240 mm cross-section, 5000 mm long
 > - Names each joist "Joist", group "Slab", subgroup "Structure"
 > - Colors them red (color id 3) for visual confirmation
->
+
+Optionally, if you want to be more specific about the API usage, you can add:
+
 > Use these modules: `element_controller as ec`, `attribute_controller as ac`, `geometry_controller as gc`, `visualization_controller as vc`. `create_rectangular_beam_vectors(width, height, length, p1, xl_direction, zl_direction)` is the function for beam creation.
 
 The good prompt:
 
 - States the **starting condition** (what's selected, what's open)
 - Lists the **steps** in order
-- Names the **exact API functions and modules** to use
 - Defines **success** (color them so I can see it worked)
+- (Optional) Names the **exact API functions and modules** to use
 
-## What to verify in any AI-generated script
 
-Treat the AI's output as a **first draft by a confident but new colleague**. Before running:
+## Context rotting: keep it short
 
-1. **Argument order** — does `create_rectangular_beam_vectors(...)` have the args in the cadwork order, not the OpenCV / numpy / blender order? The AI sometimes hallucinates plausible-looking signatures.
-2. **Lists vs. single IDs** — many setters take `[eid]`, not `eid`. Check every call.
-3. **Units** — cadwork is mm. The AI may default to meters for "thickness 0.04".
-4. **Imports** — make sure every module used is imported.
-5. **No deletions you did not ask for** — `ec.delete_elements` and `ec.copy_elements` are easy to get wrong.
+The AI has a limited context window (the amount of text it can "see" at once). If your conversation with the AI gets too long, its generation quality will degrade. This is called **context rotting**.
 
-Run the script with a **saved backup** of your model.
+![Screenshot](../assets/llm-mcp-imgs/ctx_r.png)
 
-## When the AI gets it wrong
+For small scripts, 3 rounds of iteration is usually enough. If you find yourself doing 10 rounds of back-and-forth with the AI, it's probably time to start a new conversation and copy-paste the working code into it.
 
-Paste the **full traceback** back into the conversation:
+For larger scripts, split your task in at least two:
+
+- **plan**: produce a high-level outline of the script but no code yet
+- **code**: write the actual code, referring to the plan for guidance
+
+![Screenshot](../assets/llm-mcp-imgs/good-bad-context.png){width=500px}
+
+
+## Reflexion: when the AI gets it wrong
+
+Paste the **full traceback error** back into the conversation:
 
 > ```
 > Traceback (most recent call last):
@@ -81,30 +92,64 @@ Paste the **full traceback** back into the conversation:
 > Please fix the function call. The signature is `(width, height, length, p1, xl_direction, zl_direction)`.
 
 Give the model the error verbatim plus the correct signature. It will fix the call.
+**Do not** summarize the error or say *"the error is that you forgot the length argument"*. The exact error message and signature are what the model needs to fix the code.
 
-## Model Context Protocol (MCP) — the deeper layer
+---
 
-Everything above is **manual** AI usage: you copy, paste, run, paste back. The **Model Context Protocol** (MCP) automates that loop.
+## Cadwork-specific context: Model Context Protocol (MCP)
+
+### Quickstart
+
+Add the following to your VS Code settings file (.vscode/mcp.json in your workspace or user settings):
+
+1. Install the MCP server:
+
+```bash
+{
+  "servers": {
+    "cadwork-pyapi": {
+      "type": "http",
+      "url": "https://pyapi.mcp.cadwork.dev/mcp"
+    }
+  }
+}
+```
+For other IDE or AI Assistatnts, refer to the MCP docs, [here](https://docs.cadwork.com/projects/cwapi3dpython/en/latest/mcp/)
+
+### Cadwork context-aware AI assistant
+
+Any AI has not necessarily been trained on the cadwork API, and for the AI to search documentation is still expensive in terms of time and tokens. That is why the AI can get function signatures wrong, or suggest non-existent functions.
+
+The [Cadwork Python API Model Context Protocol (MCP)](https://docs.cadwork.com/projects/cwapi3dpython/en/latest/mcp/) injects correct Cadwork API Python function signatures and other knowledge into the AI's environment.
+
 
 ```mermaid
 flowchart LR
     A["AI client<br/>(e.g. Claude)"] <-->|"MCP<br/>(JSON-RPC)"| B["MCP server<br/>(Python)"]
-    B <-->|"cadwork<br/>Python API"| C["cadwork 3d"]
+    B <-->|"cadwork<br/>Python API<br/>and knowledge"| C["cadwork 3d"]
 ```
 
-An MCP server exposes cadwork API functions as **tools** the AI can call directly:
+An MCP server exposes cadwork API knowledge as **tools** the AI can search directly. Take it as a very fast Cadwork search engine for AI.
 
-- The AI doesn't write a `.py` file and ask you to run it.
-- It calls `element_controller.get_all_identifiable_element_ids` over MCP and reads the result itself.
-- It iterates without you in the loop.
+To this day `19.05.2026`, the MCP Cadwork gives access to the following tools:
 
-For this workshop, **manual AI usage is enough** — and gives you more control. MCP becomes worth setting up when:
+- `search_api_examples`: search for code examples by keyword
+- `search_api_signatures`: search for function signatures by keyword
+- `search_api_modules`: search for module contents by keyword
+- `search_community_threads`: search for community forum threads by keyword
 
-- You run the same task often and want it to feel like a chat command.
-- You want the AI to **read** the model state before suggesting changes.
-- You are building a custom tool for your team.
+Do not worry, you don't need to use these tools, your AI agent will decide when to use them. You just need to set up the server and connect it to your AI client.
 
-### Further reading
+!!! hint "Use MCP to learn the API faster"
+    If you are new to the API, using an MCP server can help you learn it faster. The AI will pull in the correct function signatures and examples, so you can see how to use the API in context. 
+    Type prompts like `"How do I create a rectangular beam?"` and see the AI pull in the exact function signature and example code.
+
+!!! note "MCP vs documentation"
+    MCP is not a replacement for documentation. It is a **complement** that gives the AI direct access to the API knowledge it needs to write code. You still need to understand the API and read the docs to debug it effectively.
+
+---
+
+## Further reading
 
 - [Model Context Protocol specification](https://modelcontextprotocol.io/)
 - [Claude Code](https://claude.com/claude-code) — terminal-based AI that supports MCP servers out of the box
