@@ -191,10 +191,10 @@ Write a script that finds all elements named `"Joist"` and colors them **red**. 
     joists     = [eid for eid in all_ids if ac.get_name(eid) == "Joist"]
     rim_joists = [eid for eid in all_ids if ac.get_name(eid) == "Rim Joist"]
 
-    vc.set_color(joists, 3)
-    vc.set_color(rim_joists, 4)
+    vc.set_color(joists, 5)
+    vc.set_color(rim_joists, 6)
 
-    print(f"Colored {len(joists)} joists red and {len(rim_joists)} rim joists green")
+    print(f"Colored {len(joists)} joists red and {len(rim_joists)} rim joists brown")
     ```
 
 ---
@@ -237,7 +237,8 @@ Write a script that exports a CSV file containing the columns: `ID`, `Name`, `Gr
     import utility_controller as uc
 
     all_ids = ec.get_all_identifiable_element_ids()
-    output_path = os.path.join(uc.get_3d_file_path(), "element_report.csv")
+    file_path = Path(uc.get_3d_file_path()).parent
+    output_path = file_path / "element_report.csv"
 
     with open(output_path, "w", newline="") as f:
         writer = csv.writer(f)
