@@ -71,27 +71,28 @@ OSB   :  0.189 m³
     ```python
     import element_controller as ec
     import attribute_controller as ac
+    import geometry_controller as gc
     from collections import defaultdict
 
     all_ids = ec.get_all_identifiable_element_ids()
     volume_by_material = defaultdict(float)
 
     for eid in all_ids:
-        material = ac.get_material(eid)
+        material = ac.get_element_material_name(eid)
         volume_mm3 = gc.get_length(eid) * gc.get_width(eid) * gc.get_height(eid)
         volume_by_material[material] += volume_mm3
 
     for material, vol in sorted(volume_by_material.items()):
-        print(f"{material:12s}: {vol / 1e9:.3f} m³")
+        print(f"{material:25s}: {vol / 1e9:.3f} m³")
 
     # or without defaultdict:
     volume_by_material = {}
     for eid in all_ids:
-        material = ac.get_material(eid)
+        material = ac.get_element_material_name(eid)
         volume_mm3 = gc.get_length(eid) * gc.get_width(eid) * gc.get_height(eid)
         volume_by_material[material] = volume_by_material.get(material, 0) + volume_mm3
     for material, vol in sorted(volume_by_material.items()):
-        print(f"{material:12s}: {vol / 1e9:.3f} m³")
+        print(f"{material:25s}: {vol / 1e9:.3f} m³")
     ```
 
 ---
@@ -169,14 +170,14 @@ flowchart LR
     import attribute_controller as ac
     import geometry_controller as gc
 
-    all_ids = ec.get_all_identifiable_element_ids()
+    all_ids = ec.get_active_identifiable_element_ids() # Select all joists of the slab/floor element
     joists = [eid for eid in all_ids if ac.get_name(eid) == "Joist"]
 
-    # Get Y-coordinate of P1 for each joist (assuming joists run along X)
-    joist_positions = []
+    # Get X-coordinate of P1 for each joist (assuming joists run along Y)
+    joist_positions: list[tuple[float, int]] = []
     for eid in joists:
         p1 = gc.get_p1(eid)
-        joist_positions.append((p1.y, eid))
+        joist_positions.append((p1.x, eid))
 
     joist_positions.sort()
 
@@ -199,13 +200,15 @@ Extend the CSV export from the reading exercises: add columns for `Length`, `Wid
     ```python
     import csv
     import os
+    from pathlib import Path
     import element_controller as ec
     import attribute_controller as ac
     import geometry_controller as gc
     import utility_controller as uc
 
     all_ids = ec.get_all_identifiable_element_ids()
-    output_path = os.path.join(uc.get_3d_file_path(), "geometry_report.csv")
+    file_path = Path(uc.get_3d_file_path()).parent
+    output_path = file_path / "geometry_report.csv"
 
     with open(output_path, "w", newline="") as f:
         writer = csv.writer(f)
@@ -223,7 +226,7 @@ Extend the CSV export from the reading exercises: add columns for `Length`, `Wid
             writer.writerow([
                 eid,
                 ac.get_name(eid),
-                ac.get_material(eid),
+                ac.get_element_material_name(eid),
                 f"{length:.0f}",
                 f"{width:.0f}",
                 f"{height:.0f}",

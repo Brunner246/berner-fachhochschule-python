@@ -20,10 +20,10 @@ Write a script that renames all elements currently named `"Beam"` to `"Joist"`.
     import attribute_controller as ac
 
     all_ids = ec.get_all_identifiable_element_ids()
-    beams = [eid for eid in all_ids if ac.get_name(eid) == "Beam"]
+    beams = [eid for eid in all_ids if ac.get_name(eid) == "Joist"]
 
     for eid in beams:
-        ac.set_name([eid], "Joist")
+        ac.set_name([eid], "Beam")
 
     print(f"Renamed {len(beams)} elements")
     ```
@@ -67,10 +67,10 @@ Expected result: the joist closest to Y=0 gets `"J-001"`, the next one `"J-002"`
     import geometry_controller as gc
 
     all_ids = ec.get_all_identifiable_element_ids()
-    joists = [eid for eid in all_ids if ac.get_name(eid) == "Joist"]
+    joists = [eid for eid in all_ids if ac.get_name(eid) == "Beam"]
 
-    # Sort by Y position
-    joists_sorted = sorted(joists, key=lambda eid: gc.get_p1(eid).y)
+    # Sort by X position
+    joists_sorted = sorted(joists, key=lambda eid: gc.get_p1(eid).x)
 
     for i, eid in enumerate(joists_sorted, start=1):
         assembly_nr = f"J-{i:03d}"
@@ -288,10 +288,11 @@ Write a script that changes the width of all elements named `"Joist"` from `60 m
 
 ??? success "Solution"
     ```python
+    import element_controller as ec
     import geometry_controller as gc
     import attribute_controller as ac
 
-    all_ids = gc.get_all_identifiable_element_ids()
+    all_ids = ec.get_all_identifiable_element_ids()
     joists = [eid for eid in all_ids if ac.get_name(eid) == "Joist"]
 
     for eid in joists:
@@ -317,8 +318,8 @@ Write a script that duplicates all elements in the model and moves the copies up
     all_ids = ec.get_all_identifiable_element_ids()
     offset = cw.point_3d(0, 0, 3000)
 
-    copied_ids = ec.copy_elements(all_ids)
-    ec.move_element(copied_ids, offset)
+    copied_ids = ec.copy_elements(all_ids, offset)
+    # or copy and then ec.move_element(copied_ids, offset)
 
     print(f"Duplicated {len(copied_ids)} elements, offset by Z+3000")
     ```
