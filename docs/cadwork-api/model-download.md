@@ -15,12 +15,4 @@ Timber framed slab — cadwork 3d file (open in cadwork 3d v2025 or newer)
 
 ## What's inside the model
 
-The model represents a single-bay timber framed floor slab and contains the following element groups:
-
-| Name       |
-| ---------- |
-| Joist      |
-| Rim Joist  |
-| Blocking   |
-| Sheathing  |
-| Insulation |
+![Model screenshot](../assets/model-content.png)

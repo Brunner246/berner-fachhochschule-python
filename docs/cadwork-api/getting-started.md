@@ -10,11 +10,15 @@ cadwork 3d includes an embedded Python interpreter. Scripts can be executed dire
 
 Option 1: Use the [IDLE Shell](https://docs.python.org/3/library/idle.html) (Integrated Development and Learning Environment) that comes with Python. You can write and execute your script in the IDLE editor, which provides a simple interface for running Python code.
 
+![IDLE Shell screenshot](../assets/idle-shell.gif)
+
 Option 2: Save your script as a `.py` file in the `API.x64` folder of your cadwork user profile. Then, you can execute it from the plugin bar in cadwork 3d.
 1. Open cadwork 3d
 2. Navigate to the **Userprofil** `..\cadwork\userprofil_2026\3d\API.x64`
 3. Create a folder named `my_script` and save your Python script there (`my_script.py`) The python file must hold the same name as the folder.
 4. Start cadwork 3d and execute the script from the plugin bar
+
+![Local File screenshot](../assets/local-file.gif)
 
 ## First Script
 

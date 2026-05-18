@@ -46,7 +46,7 @@ Good prompt:
 > - Names each joist "Joist", group "Slab", subgroup "Structure"
 > - Colors them red (color id 3) for visual confirmation
 >
-> Use these modules: `element_controller as ec`, `attribute_controller as ac`, `geometry_controller as gc`, `visualization_controller as vc`. `create_rectangular_beam_vectors(width, height, length, p1, xl_direction)` is the function for beam creation.
+> Use these modules: `element_controller as ec`, `attribute_controller as ac`, `geometry_controller as gc`, `visualization_controller as vc`. `create_rectangular_beam_vectors(width, height, length, p1, xl_direction, zl_direction)` is the function for beam creation.
 
 The good prompt:
 
@@ -75,10 +75,10 @@ Paste the **full traceback** back into the conversation:
 > Traceback (most recent call last):
 >   File "frame.py", line 12, in <module>
 >     ec.create_rectangular_beam_vectors(60, 240, p1, p2)
-> TypeError: create_rectangular_beam_vectors() takes 5 positional arguments but 4 were given
+> TypeError: create_rectangular_beam_vectors() takes 6 positional arguments but 4 were given
 > ```
 >
-> Please fix the function call. The signature is `(width, height, length, p1, xl_direction)`.
+> Please fix the function call. The signature is `(width, height, length, p1, xl_direction, zl_direction)`.
 
 Give the model the error verbatim plus the correct signature. It will fix the call.
 
