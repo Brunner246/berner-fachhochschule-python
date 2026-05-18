@@ -27,6 +27,14 @@ theme:
 
 plugins:
   - search
+  - encryptcontent:
+      title_prefix: "🔒 "
+      summary: "This page contains the workshop solution."
+      placeholder: "Password"
+      decryption_failure_message: "Wrong password — try again."
+      encryption_info_message: "Ask your lecturer for the password."
+      password_button: true
+      password_button_text: "Decrypt"
 
 markdown_extensions:
   - admonition
@@ -55,7 +63,6 @@ nav:
       - Data Structures: python-basics/data-structures.md
       - Control Flow: python-basics/control-flow.md
       - Functions: python-basics/functions.md
-      - Object-Oriented Programming: python-basics/oop.md
   - cadwork 3d API:
       - Overview: cadwork-api/index.md
       - Getting Started: cadwork-api/getting-started.md

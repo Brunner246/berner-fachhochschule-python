@@ -23,6 +23,8 @@ Read it like this:
 
 Fix priority: find the line in your file that's named in the traceback. The fix is almost always there.
 
+![traceback](../assets/traceback.gif)
+
 ## Common errors and what they mean
 
 ### `AttributeError: module 'element_controller' has no attribute 'get_all_identifiable_elements'`
@@ -37,16 +39,6 @@ You **mistyped a function name**. Compare letter-by-letter against the docs or t
 ### `TypeError: set_color() takes 2 positional arguments but 3 were given`
 
 You passed arguments **in the wrong order or wrong count**. `set_color(ids, color)` takes two: a list of IDs and a color id. Forgetting that `ids` must be a **list** (`[eid]` not `eid`) is the #1 cause of this error in cadwork scripts.
-
-### `RuntimeError: Element not found: 1042`
-
-The ID you used **doesn't exist** in the current session. Causes:
-
-- You hard-coded an ID from a previous session (IDs change between sessions).
-- You deleted the element earlier in the same script and then tried to use it.
-- You're iterating over a list while modifying it.
-
-Fix: always read IDs **fresh** with `ec.get_all_identifiable_element_ids()` at the start of your script.
 
 ### `IndexError: list index out of range`
 
@@ -82,43 +74,6 @@ No traceback, no output, no model change. Walk through:
 2. Did you call a `set_*` function on an empty list? `set_name([], "Joist")` is a no-op.
 3. Are you using the right module — did you mean `ec` (element) but type `ac` (attribute)?
 4. Is anything **selected**? `get_active_identifiable_element_ids()` returns `[]` if no element is selected.
-
-## The `try` / `except` pattern
-
-When an API call may fail and you want to continue with the others, wrap it:
-
-```python
-import element_controller as ec
-import attribute_controller as ac
-
-failed = []
-for eid in element_ids:
-    try:
-        ac.set_name([eid], "Joist")
-    except RuntimeError as e:
-        failed.append((eid, str(e)))
-
-print(f"Renamed {len(element_ids) - len(failed)} elements")
-if failed:
-    print("Failed:")
-    for eid, msg in failed:
-        print(f"  {eid}: {msg}")
-```
-
-Only catch errors you can do something useful with. Catching everything and ignoring it hides real bugs.
-
-## Verify visually — your safety net
-
-The fastest way to confirm your script did what you think it did is to **color the elements you just touched**.
-
-```python
-import visualization_controller as vc
-
-# At the end of any modification script:
-vc.set_color(changed_ids, 3)   # paint everything you modified red
-```
-
-If the right elements light up, the script worked. If the wrong ones do, you found a bug — visually.
 
 ## Sanity-check checklist before asking for help
 
