@@ -106,7 +106,8 @@ After creating it, set the name to `"New Joist"`.
     height = 240.0
     length = p2.distance(p1)
     length_direction = (p2 - p1).normalized()
-    new_id = ec.create_rectangular_beam_vectors(width, height, length, p1, length_direction)
+    local_z_direction = cw.point_3d(0, 0, 1) # Up direction
+    new_id = ec.create_rectangular_beam_vectors(width, height, length, p1, length_direction, local_z_direction)
     ac.set_name([new_id], "New Joist")
 
     print(f"Created element {new_id}")
@@ -150,8 +151,9 @@ flowchart TB
         p2 = cw.point_3d(LENGTH, y, 0)
         length = p2.distance(p1)
         length_direction = (p2 - p1).normalized()
+        local_z_direction = cw.point_3d(0, 0, 1) # Up direction
 
-        new_id = ec.create_rectangular_beam_vectors(WIDTH, HEIGHT, length, p1, length_direction)
+        new_id = ec.create_rectangular_beam_vectors(WIDTH, HEIGHT, length, p1, length_direction, local_z_direction)
         ac.set_name([new_id], "Joist")
         ac.set_group([new_id], "Slab")
         ac.set_subgroup([new_id], "Structure")
@@ -209,7 +211,8 @@ flowchart TB
     p2 = cw.point_3d(0, y_end, 0)
     length = p2.distance(p1)
     length_direction = (p2 - p1).normalized()
-    rim1 = ec.create_rectangular_beam_vectors(WIDTH, HEIGHT, length, p1, length_direction)
+    local_z_direction = cw.point_3d(0, 0, 1) # Up direction
+    rim1 = ec.create_rectangular_beam_vectors(WIDTH, HEIGHT, length, p1, length_direction, local_z_direction)
     ac.set_name([rim1], "Rim Joist")
 
     # Rim joist at x=LENGTH
@@ -217,7 +220,8 @@ flowchart TB
     p2 = cw.point_3d(LENGTH, y_end, 0)
     length = p2.distance(p1)
     length_direction = (p2 - p1).normalized()
-    rim2 = ec.create_rectangular_beam_vectors(WIDTH, HEIGHT, length, p1, length_direction)
+    local_z_direction = cw.point_3d(0, 0, 1) # Up direction
+    rim2 = ec.create_rectangular_beam_vectors(WIDTH, HEIGHT, length, p1, length_direction, local_z_direction)
     ac.set_name([rim2], "Rim Joist")
 
     print(f"Created rim joists: {rim1}, {rim2}")
@@ -262,8 +266,9 @@ flowchart LR
         p2 = cw.point_3d(MID_X, y_end, 0)
         length = p2.distance(p1)
         length_direction = (p2 - p1).normalized()
+        local_z_direction = cw.point_3d(0, 0, 1) # Up direction
 
-        new_id = ec.create_rectangular_beam_vectors(WIDTH, HEIGHT, length, p1, length_direction)
+        new_id = ec.create_rectangular_beam_vectors(WIDTH, HEIGHT, length, p1, length_direction, local_z_direction)
         ac.set_name([new_id], "Blocking")
         ac.set_group([new_id], "Slab")
         ac.set_subgroup([new_id], "Structure")

@@ -59,12 +59,16 @@ nav:
   - cadwork 3d API:
       - Overview: cadwork-api/index.md
       - Getting Started: cadwork-api/getting-started.md
+      - Debugging: cadwork-api/debugging.md
+      - Geometry: cadwork-api/geometry.md
       - Elements: cadwork-api/elements.md
       - Attributes: cadwork-api/attributes.md
-      - Geometry: cadwork-api/geometry.md
-      - MCP: cadwork-api/mcp.md
+      - Visualization: cadwork-api/visualization.md
+      - AI & MCP: cadwork-api/mcp.md
       - Exercise Model: cadwork-api/model-download.md
       - "Exercises: Reading Data": cadwork-api/exercises-reading.md
       - "Exercises: Geometry": cadwork-api/exercises-geometry.md
       - "Exercises: Create & Modify": cadwork-api/exercises-create-modify.md
+      - "Capstone: Frame Generator": cadwork-api/capstone.md
+      - Cheat Sheet: cadwork-api/cheatsheet.md
   - Resources: resources/index.md

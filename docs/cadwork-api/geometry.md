@@ -108,7 +108,7 @@ A **unit vector** has length 1. It carries direction only, no magnitude. You nor
 length_direction = (p2 - p1).normalized()
 ```
 
-This is the second argument to `ec.create_rectangular_beam_vectors(width, height, length, p1, length_direction)`: cadwork wants a _direction_, not a "to" point, so the magnitude must be stripped away.
+This is the second argument to `ec.create_rectangular_beam_vectors(width, height, length, p1, length_direction, local_z_direction)`: cadwork wants a _direction_, not a "to" point, so the magnitude must be stripped away.
 
 !!! warning "Don't normalize the zero vector"
 `(p1 - p1).normalized()` divides by zero. If you compute a direction from two points, make sure they are distinct.

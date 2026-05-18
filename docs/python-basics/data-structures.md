@@ -39,6 +39,8 @@ Ordered, mutable sequences — the workhorse for collections of elements.
 - Fast append and index access
 - Supports slicing and comprehensions
 
+![list](https://www.programiz.com/sites/tutorial2program/files/list-negative-index-in-python.png)
+
 ```python
 elements = ["beam", "panel", "column"]
 
@@ -84,6 +86,8 @@ Ordered, **immutable** sequences. Once created, they cannot be changed.
 - Safe to use as dictionary keys or set members
 - Slightly faster and smaller than lists
 - Signals intent: "this grouping will not change"
+
+![tuple](https://www.programiz.com/sites/tutorial2program/files/tuple-index-item-python.png)
 
 ```python
 point = (1200.0, 500.0, 2500.0)   # x, y, z coordinate
@@ -186,6 +190,8 @@ Key-value mappings — think of them as named fields or a lookup table.
 - O(1) lookup by key
 - Clear, self-documenting code (`beam["material"]` beats `beam[3]`)
 - Flexible: values can be any type, including nested dicts or lists
+
+![dict](https://www.programiz.com/sites/tutorial2program/files/python_dictionary-example.png)
 
 ```python
 beam = {

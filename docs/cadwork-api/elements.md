@@ -26,10 +26,13 @@ import element_controller as ec
 p1 = cw.point_3d(0, 0, 0)
 p2 = cw.point_3d(5000, 0, 0)
 
+local_x_dir = (p2 - p1).normalized()  # Direction from p1 to p2
+local_z_dir = cw.point_3d(0, 0, 1)          # Up direction
+
 width = 120.0
 height = 240.0
 
-element_id = ec.create_rectangular_beam_vectors(width, height, p1, p2)
+element_id = ec.create_rectangular_beam_vectors(width, height, p1, local_x_dir, local_z_dir)
 ```
 
 ## Deleting Elements
