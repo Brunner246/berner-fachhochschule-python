@@ -173,6 +173,54 @@ Write a script that finds all elements where the group is `"Slab"` and the subgr
 
 ---
 
+## Exercise 6.1: Color the Joists
+
+Write a script that finds all elements named `"Joist"` and colors them **red**. Then color all `"Rim Joist"` elements **green**.
+
+??? example "Hint"
+    Use `visualization_controller.set_color(ids, color_id)`. Build one list of IDs per name and color each list in a single call.
+
+??? success "Solution"
+    ```python
+    import element_controller as ec
+    import attribute_controller as ac
+    import visualization_controller as vc
+
+    all_ids = ec.get_all_identifiable_element_ids()
+
+    joists     = [eid for eid in all_ids if ac.get_name(eid) == "Joist"]
+    rim_joists = [eid for eid in all_ids if ac.get_name(eid) == "Rim Joist"]
+
+    vc.set_color(joists, 3)
+    vc.set_color(rim_joists, 4)
+
+    print(f"Colored {len(joists)} joists red and {len(rim_joists)} rim joists green")
+    ```
+
+---
+
+## Exercise 6.2: Highlight Long Elements
+
+Write a script that **selects** (not colors) every element longer than `4000 mm`, so the user can inspect them in the viewport.
+
+??? example "Hint"
+    Use `geometry_controller.get_length(eid)` and `visualization_controller.set_active(ids)`.
+
+??? success "Solution"
+    ```python
+    import element_controller as ec
+    import geometry_controller as gc
+    import visualization_controller as vc
+
+    all_ids = ec.get_all_identifiable_element_ids()
+    long_ids = [eid for eid in all_ids if gc.get_length(eid) > 4000]
+
+    vc.set_active(long_ids)
+    print(f"Selected {len(long_ids)} long elements")
+    ```
+
+---
+
 ## Exercise 7: Export to CSV
 
 Write a script that exports a CSV file containing the columns: `ID`, `Name`, `Group`, `Subgroup`, `Material` for every element in the model.
