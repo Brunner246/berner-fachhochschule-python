@@ -14,6 +14,24 @@ version = 30
 pi = 3.14159
 ```
 
+!!! question "Quick Check: Variable assignment"
+    What type does Python infer for each of these?
+
+    ```python
+    a = 30
+    b = 30.0
+    c = "30"
+    d = True
+    ```
+
+    ??? success "Show answer"
+        - `a` → `int`
+        - `b` → `float`
+        - `c` → `str`
+        - `d` → `bool`
+
+        Python infers the type from the value on the right-hand side — no declaration needed.
+
 ## Numbers
 
 Python supports integers and floating-point numbers:
@@ -23,6 +41,20 @@ count = 42          # int
 height = 3.5        # float
 result = count + 10 # arithmetic
 ```
+
+!!! question "Quick Check: Integer vs. float division"
+    What are the values of `a` and `b`?
+
+    ```python
+    a = 7 / 2
+    b = 7 // 2
+    ```
+
+    ??? success "Show answer"
+        - `a` → `3.5` (true division, always returns a `float`)
+        - `b` → `3` (floor division, drops the remainder)
+
+        Tip: `7 % 2` gives the remainder (`1`).
 
 ## Strings
 
@@ -34,6 +66,23 @@ print(greeting.upper())  # HELLO, WORLD!
 print(len(greeting))     # 13
 ```
 
+!!! question "Quick Check: String operators"
+    What does this print?
+
+    ```python
+    prefix = "GL"
+    grade = 24
+    name = prefix + str(grade) + "h"
+    print(name * 2)
+    ```
+
+    ??? success "Show answer"
+        ```
+        GL24hGL24h
+        ```
+
+        `+` concatenates strings, `*` repeats them. Note: `str(grade)` is required — Python will raise `TypeError` if you try to concatenate `str + int` directly.
+
 ## Lists
 
 Lists are ordered, mutable collections:
@@ -43,6 +92,12 @@ elements = ["beam", "panel", "column"]
 elements.append("plate")
 print(elements[0])  # beam
 ```
+
+!!! question "Quick Check: List indexing"
+    After the code above runs, what is `elements[-1]`?
+
+    ??? success "Show answer"
+        `"plate"` — negative indices count from the end. `elements[-1]` is the last item, `elements[-2]` the second-to-last, and so on.
 
 ## Dictionaries
 
@@ -60,3 +115,29 @@ print(beam["material"])  # GL24h
 
 !!! note
     Python is dynamically typed — you do not need to declare the type of a variable explicitly.
+
+## Wrap-up Exercise
+
+!!! question "Mini exercise: Build a beam record"
+    Without running it, predict what this code prints. Then check by running it.
+
+    ```python
+    beam = {
+        "name": "B-01",
+        "dimensions": [120, 240, 5000],
+        "material": "GL24h",
+    }
+    width, height, length = beam["dimensions"]
+    print(f"{beam['name']} — {length / 1000} m")
+    ```
+
+    ??? success "Show answer"
+        ```
+        B-01 — 5.0 m
+        ```
+
+        Three things happen at once:
+
+        1. The list `[120, 240, 5000]` is **unpacked** into three variables.
+        2. `length / 1000` uses true division → `5.0` (a `float`).
+        3. The f-string formats the result inline.
