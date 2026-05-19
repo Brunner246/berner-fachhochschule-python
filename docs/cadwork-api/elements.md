@@ -31,8 +31,9 @@ local_z_dir = cw.point_3d(0, 0, 1)          # Up direction
 
 width = 120.0
 height = 240.0
+length = 5000.0
 
-element_id = ec.create_rectangular_beam_vectors(width, height, p1, local_x_dir, local_z_dir)
+element_id = ec.create_rectangular_beam_vectors(width, height, length, p1, local_x_dir, local_z_dir)
 ```
 
 ## Deleting Elements
@@ -61,4 +62,4 @@ beams = [
 ```
 
 !!! note
-    Element IDs are integers that uniquely identify each element in the current cadwork session. They may change between sessions.
+Element IDs are integers that uniquely identify each element in the current cadwork session. They may change between sessions.
