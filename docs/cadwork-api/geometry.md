@@ -11,7 +11,9 @@ In the cadwork Python API, both points and vectors are represented by the same t
 ![right_handed_coordinate_space](https://gamemath.com/book/figs/cartesianspace/right_handed_coordinate_space.png)
 
 ### cadwork elements - Local Coordinate System (LCS)
+
 Every element has its own local coordinate system (LCS) that defines how it is oriented in 3D space. The LCS has three axes:
+
 - **Length axis**: The primary axis along the length of the element (e.g., along a beam or joist).
 - **Width axis**: The secondary axis that defines the width of the element (e.g., across a beam or joist).
 - **Height axis**: The tertiary axis that defines the height of the element (e.g., vertical direction for a beam or joist).
@@ -22,7 +24,7 @@ Every element has its own local coordinate system (LCS) that defines how it is o
 
 ![vector_vs_point](https://gamemath.com/book/figs/vectors/2d_vector_vs_point.png)
 
-A **point** is a position in 3D space. It answers the question _where?_ — for example, the start corner of a joist.
+A **point** is a position in 3D space. It answers the question _where?_ — for example, the axis start of a joist.
 
 ```python
 import cadwork as cw
@@ -80,6 +82,7 @@ This is a common building block — for example, when placing blocking at the ce
 ## Vectors
 
 #### Interpreting a vector as a sequence of displacements
+
 ![vectors](https://gamemath.com/book/figs/vectors/3d_sequence_of_displacements.png)
 
 A **vector** has a _direction_ and a _magnitude_ (length). It answers the question _how far, and which way?_ — for example, "from P1 to P2" or "5000 mm along +X".
@@ -108,7 +111,7 @@ A **unit vector** has length 1. It carries direction only, no magnitude. You nor
 length_direction = (p2 - p1).normalized()
 ```
 
-This is the second argument to `ec.create_rectangular_beam_vectors(width, height, length, p1, length_direction, local_z_direction)`: cadwork wants a _direction_, not a "to" point, so the magnitude must be stripped away.
+This is the 5th argument to `ec.create_rectangular_beam_vectors(width, height, length, p1, length_direction, local_z_direction)`: cadwork wants a _direction_, not a "to" point, so the magnitude must be stripped away.
 
 !!! warning "Don't normalize the zero vector"
 `(p1 - p1).normalized()` divides by zero. If you compute a direction from two points, make sure they are distinct.
@@ -128,6 +131,36 @@ midpoint  = p1 + cw.point_3d(direction.x * 2500,
 ```
 
 Pattern: **start point + (unit direction × distance) = point at that distance along the direction.** This is how you place an element 2.5 m along an arbitrary axis without caring whether the axis is X, Y, or diagonal.
+
+```python
+origin = cw.point_3d(0, 0, 0)
+direction = cw.point_3d(1., 0., 0.) # along global X axis
+length = 2500.0
+p = origin + direction * length
+# what happens behind the operator overload: p = cw.point_3d(
+#     origin.x + direction.x * length,
+#     origin.y + direction.y * length,
+#     origin.z + direction.z * length,
+# )
+```
+
+```text
+            | origin.x |        | direction.x |
+origin   =  | origin.y |   d =  | direction.y |
+            | origin.z |        | direction.z |
+
+p = origin + d * length
+
+    | origin.x + direction.x * length |
+p = | origin.y + direction.y * length |
+    | origin.z + direction.z * length |
+
+With origin = (0, 0, 0), direction = (1, 0, 0), length = 2500:
+
+    | 0 + 1 * 2500 |   | 2500 |
+p = | 0 + 0 * 2500 | = |    0 |
+    | 0 + 0 * 2500 |   |    0 |
+```
 
 ### Dot product — angle and projection
 
@@ -150,7 +183,8 @@ def dot(a, b):
     return a.x * b.x + a.y * b.y + a.z * b.z
 
 cos_theta = dot(u1, u2)              # u1, u2 already normalized
-angle_rad = math.acos(cos_theta)
+angle_rad = math.acos(cos_theta)     # cos takes an angle and returns a ratio (a number between -1 and 1).
+# acos takes a ratio and returns an angle (in radians).
 angle_deg = math.degrees(angle_rad)
 ```
 
