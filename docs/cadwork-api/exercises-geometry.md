@@ -238,3 +238,118 @@ Extend the CSV export from the reading exercises: add columns for `Length`, `Wid
 
     print(f"Exported {len(all_ids)} elements to {output_path}")
     ```
+
+---
+
+## Exercise 8: Identify Vertical Stud Elements (Columns)
+
+Write a script that identifies all **vertical** stud elements in the model and prints their ID and name. A stud is vertical when its length axis runs along the global Z-axis.
+
+```mermaid
+flowchart TB
+    subgraph Timber Frame
+        C1["Column"]:::vert
+        C2["Column"]:::vert
+        B1["Beam"]:::horiz
+    end
+    classDef vert fill:#cde,stroke:#36c,stroke-width:2px;
+    classDef horiz fill:#eee,stroke:#999;
+```
+
+??? example "Hint"
+    The length axis of an element is the direction from `P1` to `P2`. Build the direction vector `(p2 - p1)`, normalize it, and check whether it is (nearly) parallel to the Z-axis — i.e. the absolute Z-component of the unit vector is close to `1.0`. Use a small tolerance to account for floating-point error and slightly tilted elements.
+
+??? success "Solution"
+    ```python
+    import math
+    import element_controller as ec
+    import attribute_controller as ac
+    import geometry_controller as gc
+
+    def is_vertical(eid: int, tolerance: float = 1e-3) -> bool:
+        p1 = gc.get_p1(eid)
+        p2 = gc.get_p2(eid)
+        dx, dy, dz = p2.x - p1.x, p2.y - p1.y, p2.z - p1.z
+        length = math.sqrt(dx * dx + dy * dy + dz * dz)
+        if length == 0:
+            return False
+        # Z-component of the unit direction vector; ~1.0 means parallel to Z
+        return abs(dz / length) > 1.0 - tolerance
+
+    all_ids = ec.get_all_identifiable_element_ids()
+    columns = [eid for eid in all_ids if is_vertical(eid)]
+
+    print(f"Found {len(columns)} vertical stud element(s):")
+    for eid in columns:
+        print(f"  ID {eid}: {ac.get_name(eid)}")
+    ```
+
+!!! tip "Going further"
+    `geometry_controller` also exposes the local axes directly via `gc.get_xl(eid)` (the length axis as a `point_3d`). You can use `abs(gc.get_xl(eid).z) > 1.0 - tolerance` instead of computing the direction from `P1`/`P2`.
+
+---
+
+## Exercise 9: Verify Beam Cross-Section (SIA / Lignum)
+
+Verify the cross-section of the floor beams against the preliminary sizing rule from the **Lignum wood construction tables** (*Lignum Holzbautabellen*), consistent with the serviceability limits of **SIA 265**.
+
+The workflow:
+
+1. Identify the beams **by name** (e.g. `"Joist"`).
+2. Restrict them to the beams that **belong to the subgroup** of the floor element — use `attribute_controller.get_subgroup()`.
+3. **Determine the span length** of each beam (distance from `P1` to `P2`).
+4. Compare the existing height `h` against the required height and report the cross-sectional area `A` and section modulus `W`.
+
+!!! info "Preliminary sizing rule (Vordimensionierung)"
+    For solid-timber floor joists under residential loading, the Lignum tables give a deflection-governed rule of thumb of roughly **h ≈ L/17 … L/20**. This exercise uses the conservative bound **h ≥ L/17** as the pass criterion. This is a *preliminary* check — a full SIA 265 verification (bending, shear, and serviceability) additionally requires the design loads, the strength class, and the modification factors.
+
+??? example "Hint"
+    - Filter with two conditions: `ac.get_name(eid) == "Joist"` **and** `ac.get_subgroup(eid) == "<floor subgroup>"`.
+    - The span (system length) is the `P1`→`P2` distance; `math.dist((p1.x, p1.y, p1.z), (p2.x, p2.y, p2.z))` is the simplest way.
+    - Cross-sectional area `A = b · h`; section modulus `W = b · h² / 6`. Watch the units: cadwork works in mm, so divide by `100` for cm² and by `1000` for cm³.
+
+??? success "Solution"
+    ```python
+    import math
+    import element_controller as ec
+    import attribute_controller as ac
+    import geometry_controller as gc
+
+    # --- configuration: adjust to match your model ---
+    BEAM_NAME = "Joist"
+    FLOOR_SUBGROUP = "Floor"        # subgroup the floor element's beams belong to
+    SPAN_TO_HEIGHT_RATIO = 17       # Lignum rule for residential floors: h >= L / 17
+
+    def span_length(eid: int) -> float:
+        p1 = gc.get_p1(eid)
+        p2 = gc.get_p2(eid)
+        return math.dist((p1.x, p1.y, p1.z), (p2.x, p2.y, p2.z))
+
+    all_ids = ec.get_all_identifiable_element_ids()
+    beams = [
+        eid for eid in all_ids
+        if ac.get_name(eid) == BEAM_NAME and ac.get_subgroup(eid) == FLOOR_SUBGROUP
+    ]
+
+    print(f"Verifying {len(beams)} '{BEAM_NAME}' beam(s) in subgroup '{FLOOR_SUBGROUP}':")
+    print(
+        f"{'ID':>6} {'L [mm]':>9} {'b [mm]':>7} {'h [mm]':>7} "
+        f"{'h_req [mm]':>11} {'A [cm2]':>9} {'W [cm3]':>9}  Check"
+    )
+
+    for eid in beams:
+        L = span_length(eid)
+        b = gc.get_width(eid)
+        h = gc.get_height(eid)
+        h_req = L / SPAN_TO_HEIGHT_RATIO
+        area_cm2 = (b * h) / 100.0                  # mm² -> cm²
+        section_modulus_cm3 = (b * h * h / 6.0) / 1000.0  # mm³ -> cm³
+        ok = "OK" if h >= h_req else "TOO LOW"
+        print(
+            f"{eid:>6} {L:>9.0f} {b:>7.0f} {h:>7.0f} {h_req:>11.0f} "
+            f"{area_cm2:>9.1f} {section_modulus_cm3:>9.1f}  {ok}"
+        )
+    ```
+
+!!! warning "System length vs. structural span"
+    The `P1`→`P2` distance is the element's system length. The structural span between supports is usually slightly shorter (bearing insets are neglected here). For a real verification, subtract the support depths or use the centre-to-centre distance of the supports.
