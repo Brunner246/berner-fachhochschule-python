@@ -73,6 +73,7 @@ nav:
       - Visualization: cadwork-api/visualization.md
       - AI & MCP: cadwork-api/mcp.md
       - Exercise Model: cadwork-api/model-download.md
+      - Warm-Up: cadwork-api/warmup.md
       - "Exercises: Reading Data": cadwork-api/exercises-reading.md
       - "Exercises: Geometry": cadwork-api/exercises-geometry.md
       - "Exercises: Create & Modify": cadwork-api/exercises-create-modify.md
